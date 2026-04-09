@@ -1,184 +1,110 @@
-Hansard UK Parliamentary Debates NLP Analysis
-=============================================
+# Hansard Topic Modeling and Sentiment Analysis
 
-Project Overview
-----------------
+NLP analysis of UK parliamentary (Hansard) debate transcripts using topic modeling and sentiment analysis to explore themes, emotional patterns, and political discourse over time.
 
-This project explores themes in UK parliamentary debates over time, analyzing emotional patterns in policy discussions and identifying differences in topic focus across political parties or speakers. The dataset contains parliamentary debate transcripts, which are analyzed using topic modeling and sentiment analysis techniques.
+## Overview
 
-## 1. Text Preprocessing
+This project analyzes UK parliamentary debate transcripts from the Hansard dataset to:
 
-Perform standard text preprocessing tasks:
-- Remove stop words, punctuation, and special characters.
-- Lowercase the text.
-- Tokenize the text.
-- Apply stemming or lemmatization.
+- Identify and track discussion topics across parliamentary sessions
+- Analyze sentiment patterns in political speeches
+- Correlate topics with sentiment trends over time
+- Compare topic distributions across political parties and speakers
+- Evaluate pre-trained sentiment models against ground truth labels
 
-## 2. Initial Data Exploration
+## Features
 
-Explore the distribution of key features:
-- `Speech_date`, `year`, `time`, `gender`, and `party_group`.
-- Visualize these distributions to gain insights into data patterns.
+### Text Preprocessing
+- Stop word removal, punctuation cleaning, lowercasing
+- Tokenization with stemming and lemmatization
 
-## 3. Speech Word Frequency Analysis
+### Topic Modeling
+- **LDA** (Latent Dirichlet Allocation) with coherence-based hyperparameter tuning and pyLDAvis visualization
+- **BERTopic** for transformer-based topic extraction
+- Dynamic topic modeling to track topic evolution over time
+- Topic distribution analysis across political parties and speakers
+- Automated topic labeling using cosine similarity with predefined labels
 
-1. **Sentiment Classification**: Define a function to classify each speech as positive or negative based on sentiment scores.
-2. **Most Common Words**: Generate a word frequency count for both positive and negative speeches:
-   - Visualize frequent words using word clouds and bar charts.
-   - Separate visualizations for positive and negative speeches.
-3. **N-gram Analysis**:
-   - Analyze bi-grams and trigrams to identify common phrases in the speeches.
-   - Conduct separate analyses for positive and negative speeches to reveal phrases indicating strong sentiment.
-4. **Feature-Based Analysis**: Repeat the Most Common Words and N-gram Analysis for `party_group` and `gender` features.
+### Sentiment Analysis
+- Multi-model sentiment classification combining AFINN, Bing, NRC, SentiWord, and Hu-Liu scores
+- Weighted ensemble with confidence and agreement metrics
+- Word cloud and n-gram analysis for positive/negative speeches
+- Feature-based analysis by `party_group` and `gender`
+- Correlation heatmaps across sentiment models
 
-## 4. Correlation Between Features and Sentiment
+### Sentiment Prediction
+- Word2Vec (GoogleNews-300) embeddings with Logistic Regression
+- DistilBERT fine-tuning for sentiment classification
+- Evaluation against ground truth labels (MSE, RMSE)
+- Classifier comparison: Logistic Regression, SVM, Random Forest, LSTM, CNN
 
-Calculate the correlation between sentiment scores and features (`Speech_date`, `year`, `time`, `gender`, and `party_group`) to analyze sentiment trends:
-- Identify if certain features (e.g., male, Labour) tend to be associated with positive or negative sentiment.
-- Visualize distribution plots for positive and negative speeches to explore potential patterns.
+## Project Structure
 
-## 5. Correlation Heatmap
+```
+.
+├── scripts/
+│   ├── text_preprocessing.py       # Text cleaning and normalization
+│   ├── data_exploration.py         # Feature distribution analysis
+│   ├── sentiment_analysis.py       # Sentiment classification & visualization
+│   ├── sentiment_correlation.py    # Sentiment-feature correlation
+│   ├── sentiment_prediction.py     # ML-based sentiment prediction
+│   ├── sentiment_model_comparison.py # Model comparison
+│   ├── topic_modeling.py           # LDA & BERTopic implementation
+│   ├── task6.py                    # Topic evolution over time
+│   └── llm_exploration.py         # LLM-based analysis
+├── graphs/                         # Generated visualizations
+├── outputT6/                       # Topic evolution outputs
+├── outputT7/                       # Sentiment-topic correlation outputs
+├── requirements.txt
+└── README.md
+```
 
-Draw a correlation heatmap for sentiment scores from different models:
-- `afinn_sentiment`, `jockers_sentiment`, `nrc_sentiment`, `huliu_sentiment`, and `rheault_sentiment`.
-- Analyze the correlation results for insights into model alignment.
+## Tech Stack
 
-## 6. Topic Modeling with LDA and BERTopic
+- **Language:** Python 3.8+
+- **Topic Modeling:** BERTopic, Gensim (LDA), pyLDAvis
+- **Sentiment:** VADER, TextBlob, AFINN, DistilBERT
+- **Embeddings:** sentence-transformers, Word2Vec, transformers
+- **ML:** scikit-learn, PyTorch
+- **Visualization:** matplotlib, seaborn, WordCloud
 
-1. **Topic Modeling**: Implement topic modeling using LDA and BERTopic.
-2. **Hyperparameter Optimization**: Optimize hyperparameters for both models using coherence scores (e.g., Cv measure) for optimal topic extraction.
-3. **Visualization**: Use visualization tools like `pyLDAvis` and BERTopic’s built-in functions for interactive topic exploration.
+## Installation
 
-## 7. Topic Evolution Over Time
+```bash
+git clone https://github.com/sardarm07/Topic-Modelling-and-Sentiment-Analysis-Hansard.git
+cd Topic-Modelling-and-Sentiment-Analysis-Hansard
+python -m venv env
+source env/bin/activate  # On Windows: env\Scripts\activate
+pip install -r requirements.txt
+```
 
-Track the evolution of topics over time:
-- Use Dynamic Topic Modeling (LDA) and BERTopic’s time-based analysis.
-- Visualize topic trends to study policy shifts over time.
+## Usage
 
-## 8. Sentiment Correlation with Topics
+1. Place the Hansard dataset (`senti_df.csv`) in the `data/` directory
+2. Run the analysis scripts individually or through the main notebook:
 
-Perform sentiment analysis on debate transcripts using VADER or TextBlob, with potential fine-tuning for parliamentary language:
-- Correlate sentiment trends with identified topics.
-- Highlight emotional patterns and contextual nuances (e.g., sarcasm, negation).
+```bash
+# Text preprocessing
+python scripts/text_preprocessing.py
 
-## 9. Comparison of Pre-Trained Sentiment Models with Ground Truth Labels
+# Topic modeling
+python scripts/topic_modeling.py
 
-1. **Sentiment Analysis**: Use pre-trained models (VADER, TextBlob) to analyze speech sentiment.
-2. **Evaluation**: Compare sentiment scores with ground truth scores in the dataset.
-3. **Error Analysis**: Calculate evaluation metrics (MSE, RMSE) and examine cases where pre-trained models significantly diverge from ground truth (e.g., sarcasm, ambiguous language).
+# Sentiment analysis
+python scripts/sentiment_analysis.py
 
-## 10. Sentiment Prediction Using Extracted Features
+# Sentiment prediction
+python scripts/sentiment_prediction.py
+```
 
-Convert speech text into numerical representations for machine learning models:
-1. Use word embeddings (Word2Vec, GloVe, BERT) for contextual and semantic capture.
-2. Build a sentiment classification model to predict whether a speech is positive or negative.
-3. Train the model using extracted features and evaluate on a test dataset.
-4. Compare performance across classifiers (Logistic Regression, SVM, Random Forest, and deep learning models such as LSTM or CNN).
+## Dataset
 
-## 11. Topic Distributions Across Political Parties and Speakers
+The project uses UK Hansard parliamentary debate transcripts containing:
+- Speech text and metadata
+- Speaker information (name, gender, party)
+- Pre-computed sentiment scores (AFINN, Bing, NRC, SentiWord, Hu-Liu)
+- Temporal data (date, year, time)
 
-Analyze and visualize topic distributions across political parties and speakers:
-- Reveal trends in political discourse and differences in focus among parties or speakers.
+## License
 
-## 12. Topic Representation and Interpretation
-
-Work with domain experts for topic interpretation, aided by automated labeling techniques:
-- Systematic labeling for large datasets to assign meaningful labels to each topic based on representative words.
-
-## 13. Advanced NLP and LLM Techniques and Suggestions
-
-Explore additional NLP techniques or state-of-the-art models:
-- Experiment with transformer-based models such as RoBERTa or GPT.
-- Compare their performance to previous methods (BERT, traditional embeddings).
-
-## 14. Literature Review and Discussion
-
-Identify relevant literature to support findings:
-- Discuss strengths and weaknesses of the data processing pipeline.
-
----
-
-
-
-File Structure
---------------
-
-*   **main\_analysis.ipynb**: The main Jupyter Notebook for running the complete analysis.
-    
-*   **scripts/**: Contains reusable Python scripts for different tasks:
-    
-    *   text\_preprocessing.py
-        
-    *   data\_exploration.py
-        
-    *   sentiment\_analysis.py
-        
-    *   sentiment\_correlation.py
-        
-    *   topic\_modeling.py
-        
-    *   sentiment\_prediction.py
-        
-*   **data/**: Directory containing the CSV data file (senti\_df.csv).
-    
-*   **outputs/**: Directory to save generated plots and models.
-    
-*   **requirements.txt**: Python package requirements for the project.
-    
-
-Installation and Setup
-----------------------
-
-1.  bashCopy codegit clone https://github.com/username/hansard-nlp-analysis.gitcd hansard-nlp-analysis
-    
-2.  bashCopy codepython -m venv envsource env/bin/activate # On Windows: env\\Scripts\\activate
-    
-3.  bashCopy codepip install -r requirements.txt
-    
-4.  bashCopy codejupyter notebook main\_analysis.ipynb
-    
-
-How to Run
-----------
-
-1.  Open main\_analysis.ipynb and run each cell sequentially to perform the analysis.
-    
-2.  Ensure that data/senti\_df.csv is in the correct directory.
-    
-
-Project Tasks
--------------
-
-1.  **Text Preprocessing**: Cleaning and normalizing the speech text.
-    
-2.  **Data Exploration**: Visualizing distributions of features such as date, year, gender, and party group.
-    
-3.  **Sentiment Analysis**: Classifying speeches and visualizing word frequencies.
-    
-4.  **N-gram Analysis**: Identifying common bi-grams and tri-grams.
-    
-5.  **Correlation Analysis**: Plotting correlation heatmaps for different sentiment scores.
-    
-6.  **Topic Modeling**: Implementing LDA and BERTopic for topic extraction.
-    
-7.  **Sentiment Prediction**: Training models using extracted features for sentiment classification.
-    
-8.  **Visualization and Interpretation**: Generating insights through plots and model outputs.
-    
-
-Requirements
-------------
-
-*   Python 3.8+
-    
-*   Jupyter Notebook
-    
-*   Libraries: pandas, numpy, matplotlib, seaborn, scikit-learn, gensim, BERTopic, etc.
-    
-
-Refer to requirements.txt for the complete list.
-
-Results and Observations
------------------------
-
-*   Detailed results, including visualizations and sentiment trends, can be found within the notebook output.
+This project was developed as part of academic coursework.
